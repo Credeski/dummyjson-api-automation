@@ -1,0 +1,419 @@
+{
+  "info": {
+    "_postman_id": "98ba692a-f31a-411c-b297-f2c21dfa4d00",
+    "name": "DummyJSON API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47564819",
+    "_collection_link": "https://go.postman.co/collection/47564819-98ba692a-f31a-411c-b297-f2c21dfa4d00?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Valid Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Check for valid credentials\", function() {\r\n    pm.expect(pm.response.json().username).to.equal(\"emilys\")\r\n});\r\n\r\npm.test(\"Check for accessToken\", function() {\r\n    pm.expect(pm.response.json().accessToken).to.not.be.null\r\n});\r\n\r\npm.test(\"Check status code\", function() {\r\n    pm.response.to.have.status(200)\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"emilys\",\r\n  \"password\": \"emilyspass\",\r\n  \"expiresInMins\": 30\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Verify that error message is present\", function (){\r\n    pm.expect(pm.response.json().message).to.not.be.undefined;\r\n    pm.expect(pm.response.json().message).to.equal(\"Invalid credentials\");\r\n})\r\n\r\npm.test(\"Verify that status code is 401\", function () {\r\n    pm.expect(pm.response.code).to.equal(400);\r\n})\r\n\r\npm.test(\"Verify that no user detail is returned\", function(){\r\n    pm.expect(pm.response.json()).to.not.have.property(\"user\");\r\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"adam\",\r\n  \"password\": \"emilyspass\",\r\n  \"expiresInMins\": 30\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Missing Credentials",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Response should contain an error message\", function () {\r\n    pm.expect(pm.response.json().message).to.eql(\"Username and password required\");\r\n});\r\n\r\npm.test(\"Status code should be 400\", function () {\r\n    pm.expect(pm.response.code).to.eql(400);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"\",\r\n  \"password\": \"emilyspass\",\r\n  \"expiresInMins\": 30\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}//auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get User By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"User has correct Id\", function () {\r\n    pm.expect(pm.response.json().id).to.eql(1);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Response body contains the correct message\", function () {\r\n    pm.expect(pm.response.json().message).to.eql(\"User with id '2000' not found\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/2000",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "2000"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Expect correct username\", function () {\n    const jsonData = pm.response.json();\n    pm.expect(jsonData.users[0].username).to.eql(\"emilys\");\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/search?q=Emily",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Emily"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get Product By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Product id is 20\", function () {\r\n    pm.expect(pm.response.json().id).to.eql(20);\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "20"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Invalid Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Response body contains the correct message\", function () {\r\n    pm.expect(pm.response.text()).to.include(\"Product with id '2000' not found\");\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/2000",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "2000"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Product name is correct\", function () {\r\n    pm.expect(pm.response.json().products[0].title).to.eql(\"Cooking Oil\");\r\n});\r\n\r\npm.test(\"Product Id is 20\", function () {\r\n    pm.expect(pm.response.json().products[0].id).to.eql(20);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/search?q=Cooking Oil",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Cooking Oil"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Carts",
+      "item": [
+        {
+          "name": "Create Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const jsonData = pm.response.json();\n\npm.test(\"Status code is 201\", function () {\n    pm.response.to.have.status(201);\n});\n\npm.test(\"Cart ID is present and is a number\", function () {\n    pm.expect(jsonData.id).to.be.a('number');\n});\n\npm.test(\"Total products in cart is correct\", function () {\n    pm.expect(jsonData.totalProducts).to.equal(2);\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"userId\": 1,\r\n    \"products\": [\r\n      {\r\n        \"id\": 144,\r\n        \"quantity\": 4\r\n      },\r\n      {\r\n        \"id\": 98,\r\n        \"quantity\": 1\r\n      }\r\n    ]\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/carts/add",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "carts",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"User Id is 1\", function () {\r\n    pm.expect(pm.response.json().carts[0].id).to.eql(1);\r\n});\r\n\r\npm.test(\"Products exist in an array\", function () {\r\n    pm.expect(pm.response.json().carts[0].products).to.be.an('array');\r\n});\r\n\r\npm.test(\"Product Id is present\", function () {\r\n    pm.expect(pm.response.json().carts[0].products[0].id).to.eql(162);\r\n});\r\n\r\npm.test(\"Product total is present\", function () {\r\n    pm.expect(pm.response.json().carts[0].products[0].total).to.eql(119.96);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/carts/user/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "carts",
+                "user",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://dummyjson.com"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    }
+  ]
+}
