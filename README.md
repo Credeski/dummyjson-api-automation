@@ -40,7 +40,3 @@ npm install
 npx playwright test
 npx playwright show-report
 ```
-
-## Purpose
-
-This project demonstrates taking API test scenarios from **Postman into automated Playwright tests**, validating requests, responses, status codes, and API data.
